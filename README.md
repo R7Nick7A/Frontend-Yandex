@@ -5,7 +5,7 @@
 Структура проекта:
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
-- src/components/base/ — папка с базовым кодом
+- src/components/base/ — папка с базовым кодом (Component, Model, events, api)
 
 Важные файлы:
 - src/pages/index.html — HTML-файл главной страницы
@@ -84,6 +84,21 @@ type AppState = {
   };
 };
 ```
+
+**Базовая архитектура (components/base/)**
+- Component.ts — абстрактный класс для UI-компонентов, включает:
+
+шаблон template, хелперы для работы с DOM (html, mount, update, ref)
+
+- Model.ts — абстрактная модель данных, реализует:
+
+метод setState() с автоматическим обновлением
+
+возможность эмитить события на изменения состояния
+
+- events.ts — реализация EventEmitter, интерфейс событийного взаимодействия:
+
+on, emit, off, trigger, onAll, offAll
 
 **Логика работы**
 
