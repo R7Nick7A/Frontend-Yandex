@@ -65,7 +65,6 @@ type CartItem = {
   title: string;  // Название
   price: number;  // Цена (обязательно число)
 };
-```
 
 **Состояние приложения:**
 
@@ -84,35 +83,93 @@ type AppState = {
     phone: string;
   };
 };
+
+**Дополнительные сущности:**
+
 ```
+type DeliveryInfo = {
+  address: string;
+  paymentMethod: 'online' | 'offline';
+};
 
-**Базовая архитектура (components/base/)**
-- Component.ts — абстрактный класс для UI-компонентов, включает:
+type ContactInfo = {
+  email: string;
+  phone: string;
+};
 
-шаблон template, хелперы для работы с DOM (html, mount, update, ref)
+type IEvents = {
+  on<T>(event: string, callback: (data: T) => void): void;
+  emit<T>(event: string, data?: T): void;
+  off(event: string, callback: Function): void;
+};
 
-- Model.ts — абстрактная модель данных, реализует:
+type IProduct = {
+  id: string;
+  title: string;
+  description: string;
+  image: string;
+  price: number | null;
+  category: 'софт-скил' | 'хард-скил' | 'другое';
+};
 
-метод setState() с автоматическим обновлением
+type IOrder = {
+  payment: 'online' | 'offline';
+  address: string;
+  email: string;
+  phone: string;
+  total: number;
+  items: string[];
+};
 
-возможность эмитить события на изменения состояния
+type IOrderResult = {
+  id: string;
+  total: number;
+};
 
-- events.ts — реализация EventEmitter, интерфейс событийного взаимодействия:
+**Интерфейсы компонентов:**
 
-on, emit, off, trigger, onAll, offAll
+```
+interface IComponent {
+  render(): HTMLElement;
+  setState(data: Partial<T>): void;
+}
 
-**Логика работы**
+interface IModal {
+  open(): void;
+  close(): void;
+  setContent(content: HTMLElement): void;
+}
 
-Каталог:
-Карточки товаров → модальное окно по клику
+interface ICart {
+  addItem(item: CartItem): void;
+  removeItem(id: string): void;
+  clear(): void;
+  getTotal(): number;
+}
 
-Корзина:
-Список с номерами позиций → кнопка «Оформить»
+interface IOrderForm {
+  setAddress(address: string): void;
+  setPayment(method: 'online' | 'offline'): void;
+  setEmail(email: string): void;
+  setPhone(phone: string): void;
+  validate(): boolean;
+  submit(): Promise<IOrderResult>;
+}
 
-Оформление:
-Доставка: Адрес + способ оплаты → «Далее»
-Контакты: Email + телефон → «Подтвердить»
-Успех: Показ итоговой суммы
+**События приложения:**
+
+```
+type AppEvents = {
+  'items:changed': CartItem[];
+  'cart:open': void;
+  'cart:close': void;
+  'order:submit': IOrder;
+  'order:success': IOrderResult;
+  'modal:open': void;
+  'modal:close': void;
+  'product:select': IProduct;
+};
+```
 
 ## UML-диаграмма классов
 
