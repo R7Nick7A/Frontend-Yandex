@@ -178,54 +178,54 @@ type AppEvents = {
 ```mermaid
 classDiagram
     class Component {
-        #container: HTMLElement
-        #containerSelector: string
-        +render(data?: T): HTMLElement
-        #initialize(): void
-        #setText(element: HTMLElement, value: string): void
-        #setDisabled(element: HTMLElement, state: boolean): void
-        #setImage(element: HTMLImageElement, src: string, alt?: string): void
+        -container: HTMLElement
+        -containerSelector: string
+        +render(data) HTMLElement
+        -initialize() void
+        -setText(element, value) void
+        -setDisabled(element, state) void
+        -setImage(element, src, alt) void
     }
 
     class Model {
-        #events: IEvents
-        +constructor(data: Partial<T>, events: IEvents)
-        #emitChanges(eventName: string, payload?: Partial<T>): void
+        -events: IEvents
+        +constructor(data, events)
+        -emitChanges(eventName, payload) void
     }
 
     class EventEmitter {
-        -events: { [key: string]: Function[] }
-        +on<T>(event: string, callback: (data: T) => void): void
-        +emit<T>(event: string, data?: T): void
-        +off(event: string, callback: Function): void
-        +trigger<T>(eventName: string, context?: Partial<T>): Function
+        -events: Map
+        +on(event, callback) void
+        +emit(event, data) void
+        +off(event, callback) void
+        +trigger(eventName, context) Function
     }
 
     class Api {
         -baseUrl: string
-        +get<T>(endpoint: string): Promise<T>
-        +post<T>(endpoint: string, data: object): Promise<T>
+        +get(endpoint) Promise
+        +post(endpoint, data) Promise
     }
 
     class CartModel {
-        -items: CartItem[]
+        -items: Array
         -total: number
-        +addItem(item: CartItem): void
-        +removeItem(id: string): void
-        +clear(): void
-        +getItems(): CartItem[]
-        +getTotal(): number
+        +addItem(item) void
+        +removeItem(id) void
+        +clear() void
+        +getItems() Array
+        +getTotal() number
     }
 
     class OrderModel {
-        -delivery: DeliveryInfo
-        -contacts: ContactInfo
+        -delivery: Object
+        -contacts: Object
         -isValid: boolean
-        +setDelivery(delivery: DeliveryInfo): void
-        +setContacts(contacts: ContactInfo): void
-        +getDelivery(): DeliveryInfo
-        +getContacts(): ContactInfo
-        +reset(): void
+        +setDelivery(delivery) void
+        +setContacts(contacts) void
+        +getDelivery() Object
+        +getContacts() Object
+        +reset() void
     }
 
     class ProductCard {
@@ -234,41 +234,41 @@ classDiagram
         -category: HTMLElement
         -price: HTMLElement
         -button: HTMLButtonElement
-        +set id(value: string)
-        +set title(value: string)
-        +set image(value: string)
-        +set category(value: string)
-        +set price(value: number)
+        +setId(value) void
+        +setTitle(value) void
+        +setImage(value) void
+        +setCategory(value) void
+        +setPrice(value) void
     }
 
     class Cart {
         -list: HTMLElement
         -total: HTMLElement
         -button: HTMLElement
-        +set items(items: CartItem[])
-        +set total(total: number)
-        +set selected(items: string[])
+        +setItems(items) void
+        +setTotal(total) void
+        +setSelected(items) void
     }
 
     class Modal {
         -closeButton: HTMLButtonElement
         -content: HTMLElement
-        +set content(value: HTMLElement)
-        +open(): void
-        +close(): void
+        +setContent(value) void
+        +open() void
+        +close() void
     }
 
     class Order {
         -button: HTMLElement
         -form: HTMLElement
-        -payment: HTMLButtonElement[]
+        -payment: Array
         -address: HTMLInputElement
         -email: HTMLInputElement
         -phone: HTMLInputElement
-        +set address(value: string)
-        +set payment(value: string)
-        +set email(value: string)
-        +set phone(value: string)
+        +setAddress(value) void
+        +setPayment(value) void
+        +setEmail(value) void
+        +setPhone(value) void
     }
 
     Component <|-- ProductCard
