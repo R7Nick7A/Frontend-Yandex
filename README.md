@@ -271,15 +271,28 @@ classDiagram
         +setPhone(value) void
     }
 
+    %% Наследование
     Component <|-- ProductCard
     Component <|-- Cart
     Component <|-- Modal
     Component <|-- Order
     Model <|-- CartModel
     Model <|-- OrderModel
+
+    %% Зависимости
     EventEmitter --> Model
     Api --> CartModel
     Api --> OrderModel
+    
+    %% Новые связи
+    CartModel --> Cart
+    OrderModel --> Order
+    ProductCard --> CartModel
+    Cart --> OrderModel
+    Order --> Api
+    Modal --> ProductCard
+    Modal --> Cart
+    Modal --> Order
 ```
 
 ## Взаимодействие компонентов
