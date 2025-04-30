@@ -177,6 +177,7 @@ type AppEvents = {
 
 ```mermaid
 classDiagram
+    %% Базовые классы
     class Component {
         -container: HTMLElement
         -containerSelector: string
@@ -207,6 +208,13 @@ classDiagram
         +post(endpoint, data) Promise
     }
 
+    %% Модели
+    class CatalogModel {
+        -items: Array
+        +getItems() Array
+        +getItem(id) Object
+    }
+
     class CartModel {
         -items: Array
         -total: number
@@ -226,9 +234,11 @@ classDiagram
         +getDelivery() Object
         +getContacts() Object
         +reset() void
+        +submit() Promise
     }
 
-    class ProductCard {
+    %% UI Компоненты
+    class Card {
         -title: HTMLElement
         -image: HTMLImageElement
         -category: HTMLElement
@@ -241,13 +251,33 @@ classDiagram
         +setPrice(value) void
     }
 
-    class Cart {
+    class ProductCard {
+        -card: Card
+        +setId(value) void
+        +setTitle(value) void
+        +setImage(value) void
+        +setCategory(value) void
+        +setPrice(value) void
+    }
+
+    class ProductDetails {
+        -card: Card
+        -description: HTMLElement
+        +setDescription(value) void
+    }
+
+    class Basket {
         -list: HTMLElement
         -total: HTMLElement
         -button: HTMLElement
         +setItems(items) void
         +setTotal(total) void
-        +setSelected(items) void
+    }
+
+    class Cart {
+        -basket: Basket
+        +setItems(items) void
+        +setTotal(total) void
     }
 
     class Modal {
@@ -258,41 +288,78 @@ classDiagram
         +close() void
     }
 
-    class Order {
-        -button: HTMLElement
-        -form: HTMLElement
-        -payment: Array
+    class SuccessModal {
+        -modal: Modal
+        -total: HTMLElement
+        +setTotal(value) void
+    }
+
+    class DeliveryForm {
         -address: HTMLInputElement
-        -email: HTMLInputElement
-        -phone: HTMLInputElement
+        -payment: Array
         +setAddress(value) void
         +setPayment(value) void
+        +validate() boolean
+    }
+
+    class ContactForm {
+        -email: HTMLInputElement
+        -phone: HTMLInputElement
         +setEmail(value) void
         +setPhone(value) void
+        +validate() boolean
+    }
+
+    class OrderForm {
+        -delivery: DeliveryForm
+        -contacts: ContactForm
+        +setDelivery(value) void
+        +setContacts(value) void
+        +validate() boolean
+    }
+
+    class Order {
+        -form: OrderForm
+        +setDelivery(value) void
+        +setContacts(value) void
+        +validate() boolean
+        +submit() Promise
     }
 
     %% Наследование
-    Component <|-- ProductCard
-    Component <|-- Cart
-    Component <|-- Modal
-    Component <|-- Order
+    Model <|-- CatalogModel
     Model <|-- CartModel
     Model <|-- OrderModel
+    Component <|-- Card
+    Component <|-- ProductCard
+    Component <|-- ProductDetails
+    Component <|-- Basket
+    Component <|-- Cart
+    Component <|-- Modal
+    Component <|-- SuccessModal
+    Component <|-- DeliveryForm
+    Component <|-- ContactForm
+    Component <|-- OrderForm
+    Component <|-- Order
+
+    %% Композиция
+    ProductCard *-- Card
+    ProductDetails *-- Card
+    Cart *-- Basket
+    SuccessModal *-- Modal
+    Order *-- OrderForm
+    OrderForm *-- DeliveryForm
+    OrderForm *-- ContactForm
 
     %% Зависимости
     EventEmitter --> Model
+    Api --> CatalogModel
     Api --> CartModel
     Api --> OrderModel
-    
-    %% Новые связи
+    CatalogModel --> ProductCard
+    CatalogModel --> ProductDetails
     CartModel --> Cart
     OrderModel --> Order
-    ProductCard --> CartModel
-    Cart --> OrderModel
-    Order --> Api
-    Modal --> ProductCard
-    Modal --> Cart
-    Modal --> Order
 ```
 
 ## Взаимодействие компонентов
