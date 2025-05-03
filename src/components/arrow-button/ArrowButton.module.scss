@@ -1,0 +1,61 @@
+.container {
+  box-sizing: border-box;
+  position: fixed;
+  top: 31px;
+  display: flex;
+  width: 100px;
+  height: 100px;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  border-right: 1px;
+  background-color: #000;
+  transition: transform 0.5s ease;
+}
+
+.container_open {
+  transform: translate(616px);
+}
+
+.arrow {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  transform: rotate(180deg);
+  transition: transform 0.5s ease;
+}
+
+.arrow_open {
+  transform: rotate(0deg);
+}
+
+.arrowButton {
+  position: fixed;
+  top: 6%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100px;
+  height: 100px;
+  background-color: #000000;
+  border: 1px solid #000;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.5s ease;
+
+  &.arrowButton_open {
+    transform: translateY(-50%) translateX(616px);
+  }
+}
+
+.arrow {
+  transition: transform 0.5s ease;
+
+  .arrowButton_open & {
+    transform: rotate(360deg);
+  }
+}
