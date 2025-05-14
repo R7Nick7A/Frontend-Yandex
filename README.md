@@ -5,7 +5,7 @@
 Структура проекта:
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
-- src/components/base/ — папка с базовым кодом (Component, Model, events, api)
+- src/components/base/ — папка с базовым кодом
 
 Важные файлы:
 - src/pages/index.html — HTML-файл главной страницы
@@ -29,7 +29,6 @@ npm run start
 yarn
 yarn start
 ```
-
 ## Сборка
 
 ```
@@ -42,375 +41,138 @@ npm run build
 yarn build
 ```
 
-## Описание проекта  
-**Онлайн-магазин** цифровых товаров для разработчиков 
-Содержание:
-- 📦 Каталог товаров с модальными окнами  
-- 🛒 Корзина с пошаговым оформлением  
-- 📝 3 этапа заказа: доставка → контакты → подтверждение  
 
-## Архитектура (типы данных)
-**Основные сущности:**
+# 🛒 Web-ларёк
 
-```
-type Product = {
-  id: string;
-  title: string;
-  price: number | null;
-  category: 'софт-скил' | 'хард-скил' | 'другое';
-};
+Интернет-магазин, построенный по архитектуре MVP.
 
-type CartItem = {
-  index: number;  // Порядковый номер
-  title: string;  // Название
-  price: number;  // Цена (обязательно число)
-};
-```
+## 🚀 Запуск проекта
 
-**Состояние приложения:**
+Перед запуском необходимо создать файл .env:
 
 ```
-type AppState = {
-  catalog: Product[];  // Все товары
-  cart: {
-    items: CartItem[]; // Товары в корзине
-    total: number;     // Итоговая сумма
-  };
-  checkout: {
-    currentStep: 'cart' | 'delivery' | 'contacts' | 'success';
-    address: string;      // Этап доставки
-    paymentMethod: 'online' | 'offline';
-    email: string;       // Этап контактов
-    phone: string;
-  };
-};
+API_ORIGIN=https://larek-api.nomoreparties.co
+```
+🧱 Архитектура проекта
+Проект реализован по паттерну MVP (Model-View-Presenter).
+
+🗂️ Структура проекта
+```
+src/
+├── common.blocks/          # Компоненты интерфейса (стили, шаблоны)
+├── components/
+│   ├── base/               # Базовые классы и компоненты
+│       ├── api.ts          # Абстракция для работы с сетевыми запросами
+│       ├── events.ts       # Реализация событийной системы (EventEmitter)
+│       └── view.ts         # Базовый класс View
+│   ├── CartModel.ts    # Модель корзины
+│   ├── CartView.ts     # Представление корзины
+│   ├── DataApi.ts      # Класс работы с API сервера
+│   ├── FormView.ts     # Базовый класс для форм
+│   ├── ItemView.ts     # Представление карточки товара
+│   ├── ModalView.ts    # Управление модальными окнами
+│   ├── OrderModel.ts   # Модель заказа
+│   └── SuccessWindowView.ts # Представление успешного оформления заказа
+├── images/                 # Изображения
+├── pages/                  # Страницы сайта
+├── public/                 # Публичные файлы (favicon, robots.txt и т.д.)
+├── scss/                   # Стили проекта на SCSS
+├── types/
+│   └── index.ts            # Типы данных проекта (Product, Order, ContactInfo и др.)
+├── utils/
+│   ├── constants.ts        # Константы проекта
+│   └── utils.ts            # Утилитарные функции
+├── vendor/                 # Сторонние библиотеки
+└── index.ts                # Точка входа приложения
 ```
 
-**Дополнительные сущности:**
+🧩 Компоненты и модели данных
+📦 Модели
+CartModel.ts — управление товарами в корзине (добавление, удаление, очистка).
 
-```
-type DeliveryInfo = {
-  address: string;
-  paymentMethod: 'online' | 'offline';
-};
+OrderModel.ts — хранение информации о заказе и контактных данных пользователя.
 
-type ContactInfo = {
-  email: string;
-  phone: string;
-};
+🖼️ Представления (Views)
+View.ts — базовый класс для всех представлений. Управляет подпиской на события и отрисовкой данных.
 
-type IEvents = {
-  on<T>(event: string, callback: (data: T) => void): void;
-  emit<T>(event: string, data?: T): void;
-  off(event: string, callback: Function): void;
-};
+ItemView.ts — визуализация карточки одного товара.
 
-type IProduct = {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  price: number | null;
-  category: 'софт-скил' | 'хард-скил' | 'другое';
-};
+CartView.ts — отображение списка товаров в корзине.
 
-type IOrder = {
-  payment: 'online' | 'offline';
-  address: string;
-  email: string;
-  phone: string;
-  total: number;
-  items: string[];
-};
+FormView.ts — базовый класс для работы с формами.
 
-type IOrderResult = {
-  id: string;
-  total: number;
-};
+SuccessWindowView.ts — сообщение об успешной покупке.
 
-**Интерфейсы компонентов:**
+ModalView.ts — управление отображением модальных окон.
 
-```
-interface IComponent {
-  render(): HTMLElement;
-  setState(data: Partial<T>): void;
-}
+⚡ Инфраструктурные компоненты
+api.ts — вспомогательная обёртка над fetch для HTTP-запросов.
 
-interface IModal {
-  open(): void;
-  close(): void;
-  setContent(content: HTMLElement): void;
-}
+DataApi.ts — специализированный класс для работы с API товаров и заказов.
 
-interface ICart {
-  addItem(item: CartItem): void;
-  removeItem(id: string): void;
-  clear(): void;
-  getTotal(): number;
-}
+events.ts — EventEmitter: управление подпиской/оповещением событий.
 
-interface IOrderForm {
-  setAddress(address: string): void;
-  setPayment(method: 'online' | 'offline'): void;
-  setEmail(email: string): void;
-  setPhone(phone: string): void;
-  validate(): boolean;
-  submit(): Promise<IOrderResult>;
-}
+constants.ts — хранение неизменяемых значений: пути, тексты сообщений и др.
 
-**События приложения:**
-
-```
-type AppEvents = {
-  'items:changed': CartItem[];
-  'cart:open': void;
-  'cart:close': void;
-  'order:submit': IOrder;
-  'order:success': IOrderResult;
-  'modal:open': void;
-  'modal:close': void;
-  'product:select': IProduct;
-};
-```
-
-## UML-диаграмма классов
-
-```mermaid
-classDiagram
-    %% Базовые классы
-    class Component {
-        -container: HTMLElement
-        -containerSelector: string
-        +render(data) HTMLElement
-        -initialize() void
-        -setText(element, value) void
-        -setDisabled(element, state) void
-        -setImage(element, src, alt) void
-    }
-
-    class Model {
-        -events: IEvents
-        +constructor(data, events)
-        -emitChanges(eventName, payload) void
-    }
-
-    class EventEmitter {
-        -events: Map
-        +on(event, callback) void
-        +emit(event, data) void
-        +off(event, callback) void
-        +trigger(eventName, context) Function
-    }
-
-    class Api {
-        -baseUrl: string
-        +get(endpoint) Promise
-        +post(endpoint, data) Promise
-    }
-
-    %% Модели
-    class CatalogModel {
-        -items: Array
-        +getItems() Array
-        +getItem(id) Object
-    }
-
-    class CartModel {
-        -items: Array
-        -total: number
-        +addItem(item) void
-        +removeItem(id) void
-        +clear() void
-        +getItems() Array
-        +getTotal() number
-    }
-
-    class OrderModel {
-        -delivery: Object
-        -contacts: Object
-        -isValid: boolean
-        +setDelivery(delivery) void
-        +setContacts(contacts) void
-        +getDelivery() Object
-        +getContacts() Object
-        +reset() void
-        +submit() Promise
-    }
-
-    %% UI Компоненты
-    class Card {
-        -title: HTMLElement
-        -image: HTMLImageElement
-        -category: HTMLElement
-        -price: HTMLElement
-        -button: HTMLButtonElement
-        +setId(value) void
-        +setTitle(value) void
-        +setImage(value) void
-        +setCategory(value) void
-        +setPrice(value) void
-    }
-
-    class ProductCard {
-        -card: Card
-        +setId(value) void
-        +setTitle(value) void
-        +setImage(value) void
-        +setCategory(value) void
-        +setPrice(value) void
-    }
-
-    class ProductDetails {
-        -card: Card
-        -description: HTMLElement
-        +setDescription(value) void
-    }
-
-    class Basket {
-        -list: HTMLElement
-        -total: HTMLElement
-        -button: HTMLElement
-        +setItems(items) void
-        +setTotal(total) void
-    }
-
-    class Cart {
-        -basket: Basket
-        +setItems(items) void
-        +setTotal(total) void
-    }
-
-    class Modal {
-        -closeButton: HTMLButtonElement
-        -content: HTMLElement
-        +setContent(value) void
-        +open() void
-        +close() void
-    }
-
-    class SuccessModal {
-        -modal: Modal
-        -total: HTMLElement
-        +setTotal(value) void
-    }
-
-    class DeliveryForm {
-        -address: HTMLInputElement
-        -payment: Array
-        +setAddress(value) void
-        +setPayment(value) void
-        +validate() boolean
-    }
-
-    class ContactForm {
-        -email: HTMLInputElement
-        -phone: HTMLInputElement
-        +setEmail(value) void
-        +setPhone(value) void
-        +validate() boolean
-    }
-
-    class OrderForm {
-        -delivery: DeliveryForm
-        -contacts: ContactForm
-        +setDelivery(value) void
-        +setContacts(value) void
-        +validate() boolean
-    }
-
-    class Order {
-        -form: OrderForm
-        +setDelivery(value) void
-        +setContacts(value) void
-        +validate() boolean
-        +submit() Promise
-    }
-
-    %% Наследование
-    Model <|-- CatalogModel
-    Model <|-- CartModel
-    Model <|-- OrderModel
-    Component <|-- Card
-    Component <|-- ProductCard
-    Component <|-- ProductDetails
-    Component <|-- Basket
-    Component <|-- Cart
-    Component <|-- Modal
-    Component <|-- SuccessModal
-    Component <|-- DeliveryForm
-    Component <|-- ContactForm
-    Component <|-- OrderForm
-    Component <|-- Order
-
-    %% Композиция
-    ProductCard *-- Card
-    ProductDetails *-- Card
-    Cart *-- Basket
-    SuccessModal *-- Modal
-    Order *-- OrderForm
-    OrderForm *-- DeliveryForm
-    OrderForm *-- ContactForm
-
-    %% Зависимости
-    EventEmitter --> Model
-    Api --> CatalogModel
-    Api --> CartModel
-    Api --> OrderModel
-    CatalogModel --> ProductCard
-    CatalogModel --> ProductDetails
-    CartModel --> Cart
-    OrderModel --> Order
-```
-
-## Взаимодействие компонентов
-
-1. **Инициализация приложения**
-   - Создание экземпляра App
-   - Инициализация базовых компонентов
-   - Загрузка каталога товаров
-
-2. **Работа с каталогом**
-   - Отображение товаров через ProductCard
-   - Добавление в корзину через CartModel
-   - Обновление состояния через EventEmitter
-
-3. **Работа с корзиной**
-   - Управление товарами через CartModel
-   - Отображение через Cart
-   - Оформление заказа через OrderModel
-
-4. **Оформление заказа**
-   - Валидация данных через OrderModel
-   - Отображение форм через Order
-   - Отправка заказа через Api
-
-5. **Модальные окна**
-   - Управление через Modal
-   - Отображение успешного заказа через SuccessModal
-
-**Базовая архитектура (components/base/)**
-- Component.ts — абстрактный класс для UI-компонентов, включает:
-  - шаблон template
-  - хелперы для работы с DOM (html, mount, update, ref)
-
-- Model.ts — абстрактная модель данных, реализует:
-  - метод setState() с автоматическим обновлением
-  - возможность эмитить события на изменения состояния
-
-- events.ts — реализация EventEmitter, интерфейс событийного взаимодействия:
-  - on, emit, off, trigger, onAll, offAll
-
-**Логика работы**
-
-Каталог:
-- Карточки товаров → модальное окно по клику
-
-Корзина:
-- Список с номерами позиций → кнопка «Оформить»
-
-Оформление:
-- Доставка: Адрес + способ оплаты → «Далее»
-- Контакты: Email + телефон → «Подтвердить»
-- Успех: Показ итоговой суммы
+utils.ts — утилиты для работы с данными, форматирование и валидация.
 
 
+🧾 Типы данных
+Файл types/index.ts определяет типы и интерфейсы для всего приложения:
+
+IItem
+Описание товара: ```id, description, image, title, category, price (nullable)```.
+
+ICartModel
+Интерфейс корзины: ```методы add(), remove(), clear(), а также свойство total (общая сумма)```.
+
+IOrder
+Структура заказа: включает выбранные товары, контактную информацию, адрес и способ оплаты (PaymentType).
+
+IOrderModel
+Расширение заказа: хранит полные данные пользователя + состояние заказа.
+
+ICartView
+Интерфейс визуализации корзины: методы для добавления, удаления и очистки элементов.
+
+IItemView
+Интерфейс визуализации товара: методы для создания представлений карточки и модального окна.
+
+IModalView
+Интерфейс управления модальными окнами.
+
+IView
+Интерфейс базового представления: метод ```render``` и ```toggleClass```.
+
+IEventEmitter
+Интерфейс событийной системы: ```emit()```.
+
+IEventData
+Структура данных события: элемент и связанные данные о товаре.
+
+PaymentType (enum)
+Перечисление способов оплаты: online, cash.
+
+
+🔄 Взаимодействие компонентов
+Пользователь нажимает на кнопку "Добавить в корзину" на карточке товара.
+
+ItemView генерирует событие через EventEmitter(events.ts).
+
+index.ts (Презентер) ловит событие, обновляет CartModel.
+
+CartModel отправляет новое состояние через событие.
+
+CartView слушает эти события и перерисовывает содержимое корзины.
+
+Аналогично обрабатываются:
+
+оформление заказа,
+
+отправка формы,
+
+очистка корзины,
+
+открытие/закрытие модальных окон.
+
+![alt text](src/images/UML.png)

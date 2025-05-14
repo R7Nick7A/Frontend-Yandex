@@ -19,37 +19,43 @@ export interface IEvents {
  * или слушать события по шаблону например
  */
 export class EventEmitter implements IEvents {
-    private events: { [key: string]: Function[] } = {};
+    _events: Map<EventName, Set<Subscriber>>;
 
-    constructor() {}
+    constructor() {
+        this._events = new Map<EventName, Set<Subscriber>>();
+    }
 
     /**
      * Установить обработчик на событие
      */
-    on<T extends object>(event: string, callback: (data: T) => void) {
-        if (!this.events[event]) {
-            this.events[event] = [];
+    on<T extends object>(eventName: EventName, callback: (event: T) => void) {
+        if (!this._events.has(eventName)) {
+            this._events.set(eventName, new Set<Subscriber>());
         }
-        this.events[event].push(callback);
+        this._events.get(eventName)?.add(callback);
     }
 
     /**
      * Снять обработчик с события
      */
-    off(event: string, callback: Function) {
-        if (this.events[event]) {
-            this.events[event] = this.events[event].filter(cb => cb !== callback);
+    off(eventName: EventName, callback: Subscriber) {
+        if (this._events.has(eventName)) {
+            this._events.get(eventName)!.delete(callback);
+            if (this._events.get(eventName)?.size === 0) {
+                this._events.delete(eventName);
+            }
         }
     }
 
     /**
      * Инициировать событие с данными
      */
-    emit<T extends object>(event: string, data?: T) {
-        const handlers = this.events[event];
-        if (handlers) {
-            handlers.forEach(handler => handler(data));
-        }
+    emit<T extends object>(eventName: string, data?: T) {
+        this._events.forEach((subscribers, name) => {
+            if (name instanceof RegExp && name.test(eventName) || name === eventName) {
+                subscribers.forEach(callback => callback(data));
+            }
+        });
     }
 
     /**
@@ -63,7 +69,7 @@ export class EventEmitter implements IEvents {
      * Сбросить все обработчики
      */
     offAll() {
-        this.events = {};
+        this._events = new Map<string, Set<Subscriber>>();
     }
 
     /**
@@ -79,4 +85,3 @@ export class EventEmitter implements IEvents {
     }
 }
 
-export const events = new EventEmitter();
