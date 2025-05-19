@@ -71,6 +71,7 @@ module.exports = {
       '.jpg'
     ],
     alias: {
+      '@store': path.resolve(__dirname, 'src/services/store'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@components': path.resolve(__dirname, './src/components'),
       '@ui': path.resolve(__dirname, './src/components/ui'),
