@@ -1,0 +1,12 @@
+{
+  "success": true,
+  "order": {
+    "_id": "",
+    "status": "",
+    "name": "",
+    "createdAt": "",
+    "updatedAt": "",
+    "number": 12345,
+    "ingredients": []
+  }
+} 
