@@ -1,4 +1,4 @@
-# Проект. «Stellar Burger». Роутинг и авторизация
+# Проект. «Stellar Burger». Тестирвоание React-приложений
 
 [Макет](<https://www.figma.com/file/vIywAvqfkOIRWGOkfOnReY/React-Fullstack_-Проектные-задачи-(3-месяца)_external_link?type=design&node-id=0-1&mode=design>)
 
